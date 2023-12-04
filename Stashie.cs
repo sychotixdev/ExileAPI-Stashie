@@ -12,6 +12,7 @@ using ExileCore.PoEMemory.MemoryObjects;
 using ExileCore.Shared;
 using ExileCore.Shared.Enums;
 using ImGuiNET;
+using InputHumanizer.Input;
 using ItemFilterLibrary;
 using SharpDX;
 using static ExileCore.PoEMemory.MemoryObjects.ServerInventory;
@@ -32,6 +33,8 @@ namespace Stashie
         private string[] _stashTabNamesByIndex;
 
         private SyncTask<bool> _currentOperation;
+
+        private IInputController _inputController;
 
         public StashieCore()
         {
@@ -147,74 +150,85 @@ namespace Stashie
                 return false;
             }
 
-            var itemsSortedByStash = _itemsToStash
+            // Now that we're all validated up, grab an input lock so we can get going
+            var tryGetInputController = GameController.PluginBridge.GetMethod<Func<string, IInputController>>("InputHumanizer.TryGetInputController");
+            if (tryGetInputController == null)
+            {
+                LogError("InputHumanizer method not registered.");
+                return false;
+            }
+
+            if ((_inputController = tryGetInputController(this.Name)) != null)
+            {
+                using (_inputController)
+                {
+
+
+                    var itemsSortedByStash = _itemsToStash
                 .OrderBy(x => x.SkipSwitchTab || x.StashIndex == initialStashTab ? 0 : 1)
                 .ThenBy(x => x.StashIndex)
                 .ToList();
 
-            Input.KeyDown(Keys.LControlKey);
+                    _inputController.KeyDown(Keys.LControlKey);
 
-            foreach (FilterResult filterResult in itemsSortedByStash)
-            {
-                if (!filterResult.SkipSwitchTab)
-                {
-                    if (await SwitchTab(filterResult.StashIndex) == false) continue;
+                    foreach (FilterResult filterResult in itemsSortedByStash)
+                    {
+                        if (!filterResult.SkipSwitchTab)
+                        {
+                            if (await SwitchTab(filterResult.StashIndex) == false) continue;
+                        }
+
+                        int visibleStashIndex = GetIndexOfCurrentVisibleTab();
+                        InventoryType visibleInventoryType = GetTypeOfCurrentVisibleStash();
+
+                        await TaskUtils.CheckEveryFrame(() =>
+                                GameController.IngameState.IngameUi.StashElement
+                                    .AllInventories[visibleStashIndex] is not null &&
+                                visibleInventoryType != InventoryType.InvalidInventory,
+                            new CancellationTokenSource(5000).Token);
+
+                        if (GameController.IngameState.IngameUi.StashElement.AllInventories[visibleStashIndex] is null ||
+                            visibleInventoryType == InventoryType.InvalidInventory)
+                        {
+                            DebugWindow.LogError($"{Name}: Stash Tab Error. Index: {visibleStashIndex}.");
+                            return false;
+                        }
+
+                        await StashItem(filterResult);
+                    }
+
+                    await _inputController.KeyUp(Keys.LControlKey);
+
                 }
-
-                int visibleStashIndex = GetIndexOfCurrentVisibleTab();
-                InventoryType visibleInventoryType = GetTypeOfCurrentVisibleStash();
-
-                await TaskUtils.CheckEveryFrame(() =>
-                        GameController.IngameState.IngameUi.StashElement
-                            .AllInventories[visibleStashIndex] is not null &&
-                        visibleInventoryType != InventoryType.InvalidInventory,
-                    new CancellationTokenSource(5000).Token);
-
-                if (GameController.IngameState.IngameUi.StashElement.AllInventories[visibleStashIndex] is null ||
-                    visibleInventoryType == InventoryType.InvalidInventory)
-                {
-                    DebugWindow.LogError($"{Name}: Stash Tab Error. Index: {visibleStashIndex}.");
-                    return false;
-                }
-
-                await StashItem(filterResult);
             }
-
-            Input.KeyUp(Keys.LControlKey);
-
             return true;
         }
 
         private async SyncTask<bool> StashItem(FilterResult filterResult)
         {
-            Mouse.MoveMouse(
-                new Vector2N(
+            await _inputController.MoveMouse(new Vector2N(
                     filterResult.ClickPosition.X + _clickWindowOffset.X,
                     filterResult.ClickPosition.Y + _clickWindowOffset.Y
-                ),
-                Settings.MaximumInterpolationDistance, Settings.MinimumInterpolationDelay,
-                Settings.MaximumInterpolationDelay);
+                ));
 
-            await Task.Delay(Delay.GetDelay(Settings.MinimumDelay, Settings.MaximumDelay, Settings.DelayMean,
-                Settings.DelayStandardDeviation));
+            await Task.Delay(_inputController.GenerateDelay());
 
             bool isShiftUsed = false;
 
             if (filterResult.ShiftForStashing)
             {
-                Input.KeyDown(Keys.ShiftKey);
+                _inputController.KeyDown(Keys.ShiftKey);
                 isShiftUsed = true;
             }
 
-            Input.Click(MouseButtons.Left);
+            await _inputController.Click(MouseButtons.Left);
 
             if (isShiftUsed)
             {
-                Input.KeyUp(Keys.ShiftKey);
+                await _inputController.KeyUp(Keys.ShiftKey);
             }
             
-            await Task.Delay(Delay.GetDelay(Settings.MinimumDelay, Settings.MaximumDelay, Settings.DelayMean,
-                Settings.DelayStandardDeviation));
+            await Task.Delay(_inputController.GenerateDelay());
 
             return true;
         }
@@ -292,13 +306,8 @@ namespace Stashie
         {
             for (var i = 0; i < keyPresses; i++)
             {
-                Input.KeyDown(key);
-                await Task.Delay(Delay.GetDelay(Settings.MinimumDelay, Settings.MaximumDelay, Settings.DelayMean,
-                    Settings.DelayStandardDeviation));
-                Input.KeyUp(key);
-
-                await Task.Delay(Delay.GetDelay(Settings.MinimumDelay, Settings.MaximumDelay, Settings.DelayMean,
-                    Settings.DelayStandardDeviation));
+                _inputController.KeyDown(key);
+                await _inputController.KeyUp(key);
             }
 
             return true;

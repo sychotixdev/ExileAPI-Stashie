@@ -21,14 +21,12 @@
     <PackageReference Include="LinqFaster" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ItemFilter\ItemFilterLibrary.csproj" />
+    <ProjectReference Include="..\InputHumanizerLib\InputHumanizerLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="ExileCore">
       <HintPath>$(exapiPackage)\ExileCore.dll</HintPath>
-    </Reference>
-    <Reference Include="ItemFilterLibrary">
-      <HintPath>$(exapiPackage)\ItemFilterLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Kalon">
-      <HintPath>$(exapiPackage)\Kalon.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

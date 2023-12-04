@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30517.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stashie", "Stashie.csproj", "{EED0427D-D8EB-4EBC-9F6F-4AE49A83963E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stashie", "Stashie.csproj", "{EED0427D-D8EB-4EBC-9F6F-4AE49A83963E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InputHumanizer", "..\InputHumanizer\InputHumanizer.csproj", "{3592A1EA-6891-4C1B-A129-33510A9D2397}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InputHumanizerLib", "..\InputHumanizerLib\InputHumanizerLib.csproj", "{0896E6A8-6E92-4C5C-99A4-51DE12C4385E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemFilterLibrary", "..\..\..\ItemFilter\ItemFilterLibrary.csproj", "{DE4B1D96-BCE7-49E9-9D11-289B14916F8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{EED0427D-D8EB-4EBC-9F6F-4AE49A83963E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EED0427D-D8EB-4EBC-9F6F-4AE49A83963E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EED0427D-D8EB-4EBC-9F6F-4AE49A83963E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3592A1EA-6891-4C1B-A129-33510A9D2397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3592A1EA-6891-4C1B-A129-33510A9D2397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3592A1EA-6891-4C1B-A129-33510A9D2397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3592A1EA-6891-4C1B-A129-33510A9D2397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0896E6A8-6E92-4C5C-99A4-51DE12C4385E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0896E6A8-6E92-4C5C-99A4-51DE12C4385E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0896E6A8-6E92-4C5C-99A4-51DE12C4385E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0896E6A8-6E92-4C5C-99A4-51DE12C4385E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE4B1D96-BCE7-49E9-9D11-289B14916F8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE4B1D96-BCE7-49E9-9D11-289B14916F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE4B1D96-BCE7-49E9-9D11-289B14916F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE4B1D96-BCE7-49E9-9D11-289B14916F8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
