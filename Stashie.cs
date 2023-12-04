@@ -169,7 +169,7 @@ namespace Stashie
                 .ThenBy(x => x.StashIndex)
                 .ToList();
 
-                    _inputController.KeyDown(Keys.LControlKey);
+                    await _inputController.KeyDown(Keys.LControlKey);
 
                     foreach (FilterResult filterResult in itemsSortedByStash)
                     {
@@ -217,7 +217,7 @@ namespace Stashie
 
             if (filterResult.ShiftForStashing)
             {
-                _inputController.KeyDown(Keys.ShiftKey);
+                await _inputController.KeyDown(Keys.ShiftKey);
                 isShiftUsed = true;
             }
 
@@ -306,7 +306,7 @@ namespace Stashie
         {
             for (var i = 0; i < keyPresses; i++)
             {
-                _inputController.KeyDown(key);
+                await _inputController.KeyDown(key);
                 await _inputController.KeyUp(key);
             }
 
